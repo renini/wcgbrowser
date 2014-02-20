@@ -67,6 +67,13 @@ timeout_mode: 'reset'
 
 #allow_popups: True
 
+# "same_window" changes the behavior of the "allow_popups" setting so that hyperlinks that try to open new browser windows/tabs
+# are opened in the same window. In order to make use of this setting, the "allow_popups" must be set to True.
+# (note this might break some websites, but might be usefull in some situations).
+# Default: False
+
+#same_window: False
+
 # "allow_plugins" determins if plugins like flash or java will be enabled.  They must be installed seperately on the system, of course
 # Default: False
 

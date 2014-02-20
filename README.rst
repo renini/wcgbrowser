@@ -64,6 +64,7 @@ At a minimum, you need to specify a "start url" using either the config file or 
 -l, --url               The "start location" for the browser.  This is the initial URL it will load, and where it will return when reset.
 -n, --no-navigation     Turn off the navigation panel (back, forward, home, shortcuts, etc).  Make sure your actual web application is fully navigable!
 -p, --popups            Enable the creation of new windows when a link is clicked that opens in a new window, or javascript tries to open a window
+-s, --same-window       When popups are enabled this setting changes the open new window behavior to always use the same main window
 -t, --timeout           The timeout for the inactivity monitor.  After this many seconds of inactivity, reset the browser
 -u, --user	        Set the default username to be sent when a site requests authentication
 -w, --password	        Set the default password to be sent when a site requests authentication
@@ -83,6 +84,7 @@ Option Name            Default Value      Explanation
 allow_external_content False              Whether or not to allow non-html content, e.g. PDF files.  If this is true, you need to specify a content handler for the MIME type or a 404 error, "Network Error", or blank page will likely be displayed to the user.
 allow_plugins          False              If true, enables the use of plugins like flash, java, etc.
 allow_popups           False              Whether or not to allow navigation that requires opening a new browser window, such as javascript "window.open()" calls or links with a target of "_blank".  If False, the navigation will be ignored.  If true, a new window will be created as expected.
+same_window            False              When allow_popups and this setting both are set to True, then all new windows will open in the same window instead of a popup (note this might break some websites, but might be usefull in some situations).
 allow_printing         False              Enable printing of web pages from the context menu or toolbar.
 default_password       (empty)            default password to send when pages request authentication
 default_user           (empty)            default username to send when pages request authentication

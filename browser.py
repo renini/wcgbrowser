@@ -191,6 +191,7 @@ class MainWindow(QMainWindow):
         self.icon_theme = options.icon_theme or configuration.get("icon_theme", None)
         self.zoomfactor = options.zoomfactor or float(configuration.get("zoom_factor") or 1.0)
         self.allow_popups = options.allow_popups or configuration.get("allow_popups", False)
+        self.same_window = options.same_window or configuration.get("same_window", False)
         self.ssl_mode = (configuration.get("ssl_mode") in ['strict', 'ignore'] and configuration.get("ssl_mode")) or 'strict'
         self.is_fullscreen = options.is_fullscreen or configuration.get("fullscreen", False)
         self.show_navigation = not options.no_navigation and configuration.get('navigation', True)
@@ -214,6 +215,7 @@ class MainWindow(QMainWindow):
         ###Start GUI configuration###
         self.browser_window = WcgWebView(
             allow_popups=self.allow_popups,
+            same_window=self.same_window,
             default_user=self.default_user,
             default_password=self.default_password,
             zoomfactor=self.zoomfactor,
@@ -445,6 +447,7 @@ class WcgWebView(QWebView):
         self.setPage(WCGWebPage())
         self.page().setNetworkAccessManager(self.nam)
         self.allow_popups = kwargs.get('allow_popups')
+        self.same_window = kwargs.get('same_window')
         self.default_user = kwargs.get('default_user', '')
         self.default_password = kwargs.get('default_password', '')
         self.allow_plugins = kwargs.get("allow_plugins", False)
@@ -502,7 +505,7 @@ class WcgWebView(QWebView):
         This function has been overridden to allow for popup windows,
         if that feature is enabled.
         """
-        if self.allow_popups:
+        if self.allow_popups and not self.same_window:
             self.popup = WcgWebView(None, networkAccessManager=self.nam, **self.kwargs)
             # This assumes the window manager has an "X" icon
             # for closing the window somewhere to the right.
@@ -510,6 +513,9 @@ class WcgWebView(QWebView):
             self.popup.setWindowTitle("Click the 'X' to close this window! ---> ")
             self.popup.show()
             return self.popup
+        # Work around for use cases where popups should always open in same (main) window
+        elif self.allow_popups and self.same_window:
+            return self
         else:
             debug("Popup not loaded on %s" % self.url().toString())
 
@@ -705,6 +711,8 @@ if __name__ == "__main__":
                         dest="zoomfactor", help="Set the zoom factor for web pages")
     parser.add_argument("-p", "--popups", action="store_true", default=False,
                         dest="allow_popups", help="Allow the browser to open new windows")
+    parser.add_argument("-s", "--same-window", action="store_true", default=False,
+                        dest="same_window", help="Allow the browser to stay in one window")
     parser.add_argument("-u", "--user", action="store", dest="default_user",
                         help="Set the default username used for URLs that require authentication")
     parser.add_argument("-w", "--password", action="store", dest="default_password",
